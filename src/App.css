@@ -1,0 +1,113 @@
+/* import fonts */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600;700&display=swap");
+
+h1 {
+  font-family: "Roboto Mono", monospace;
+  color: #272727;
+  font-weight: 700;
+  letter-spacing: 0.1rem;
+  padding-top: 10px;
+}
+
+h1.light {
+  color: #ebebeb;
+}
+
+h3 {
+  font-family: "Roboto Mono", monospace;
+  color: #313131;
+}
+
+h3.light {
+  color: #d4d4d4;
+}
+
+h4 {
+  font-family: "Roboto Mono", monospace;
+  color: #313131;
+  padding-top: 20px;
+}
+
+h4.light {
+  color: #d4d4d4;
+}
+
+p {
+  font-family: "Roboto Mono", monospace;
+  padding: 0;
+  margin: 0;
+}
+
+.muted {
+  color: #ebebeb;
+}
+
+.cardWrapper {
+  padding-top: 5%;
+  padding-bottom: 1%;
+}
+
+.cardContainer {
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+@media only screen and (max-width: 600px) {
+  .cardContainer {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}
+
+.internalBlock {
+  padding-top: 15px;
+  padding-bottom: 30px;
+}
+
+.internalBlockSection {
+  padding-top: 10px;
+}
+
+.wrapper {
+  height: 100vh;
+}
+
+.block {
+  padding-top: 5%;
+}
+
+.blue {
+  background-color: #c5e3ee;
+}
+
+.green {
+  background-color: #c1e1c1;
+}
+
+.pink {
+  background-color: #ffc7c6;
+}
+
+.brown {
+  background-color: #e4d1bd;
+}
+
+.data {
+  color: black;
+  font-weight: 600;
+}
+
+Button p {
+  font-weight: 600;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+}
+
+Form label {
+  padding-top: 15px;
+}
+
+body {
+  background-color: #252525;
+}
