@@ -18,6 +18,7 @@ import {
   Button,
 } from "shards-react";
 import DatePicker from "../DatePicker/DatePicker.js";
+import SheetsAPI from "../SheetsAPI/SheetsAPI.js";
 import axios from "axios";
 
 class DailyCard extends React.Component {
@@ -69,10 +70,7 @@ class DailyCard extends React.Component {
 
   submitForm = () => {
     axios
-      .post(
-        "https://sheet.best/api/sheets/1a7e50d3-9e5b-43bb-a499-a1b11c209d64",
-        this.state.newEntry
-      )
+      .post(process.env.REACT_APP_SHEETS_BEST_URL, this.state.newEntry)
       .then((response) => {
         console.log(response);
       });
@@ -88,6 +86,11 @@ class DailyCard extends React.Component {
           <Container className="internalBlock">
             <Row className="internalBlockSection">
               <Col>
+                <SheetsAPI />
+              </Col>
+            </Row>
+            <Row className="internalBlockSection">
+              <Col>
                 <h4>How was your day?</h4>
                 <p>
                   Last Updated:{" "}
@@ -98,6 +101,7 @@ class DailyCard extends React.Component {
                 <p>
                   Value:
                   <span className="data">
+                    {" "}
                     {this.state.newEntry.dailyRating}
                   </span>
                 </p>

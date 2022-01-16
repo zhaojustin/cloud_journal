@@ -128,7 +128,7 @@ class CoffeeTrackerCard extends React.Component {
                         <InputGroupText>$</InputGroupText>
                       </InputGroupAddon>
                       <FormInput
-                        number
+                        number="true"
                         value={this.state.newEntry.prices}
                         name="price"
                         type="number"
