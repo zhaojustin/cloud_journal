@@ -32,6 +32,7 @@ class DailyCard extends React.Component {
       newEntry: {
         date: new Date(),
         dailyRating: 50,
+        spending: "",
         oneLiner: "",
       },
     };
@@ -39,7 +40,10 @@ class DailyCard extends React.Component {
 
   handleSlide(e) {
     this.setState({
-      dailyRating: parseFloat(e[0]),
+      newEntry: {
+        ...this.state.newEntry,
+        dailyRating: parseFloat(e[0]),
+      },
     });
   }
 
@@ -67,11 +71,7 @@ class DailyCard extends React.Component {
     axios
       .post(
         "https://sheet.best/api/sheets/1a7e50d3-9e5b-43bb-a499-a1b11c209d64",
-        [
-          this.state.newEntry.date.toString(),
-          this.state.newEntry.dailyRating,
-          this.state.newEntry.oneLiner,
-        ]
+        this.state.newEntry
       )
       .then((response) => {
         console.log(response);
@@ -97,7 +97,9 @@ class DailyCard extends React.Component {
                 </p>
                 <p>
                   Value:
-                  <span className="data"> {this.state.dailyRating}</span>
+                  <span className="data">
+                    {this.state.newEntry.dailyRating}
+                  </span>
                 </p>
                 <Slider
                   onSlide={this.handleSlide}
@@ -111,21 +113,16 @@ class DailyCard extends React.Component {
             <Row className="internalBlockSection">
               <Col>
                 {/* DATE PICKER */}
-                <Form>
-                  <FormGroup>
-                    <label htmlFor="reasons">
-                      <p>What day are you entering for?</p>
-                    </label>
-                    <div>
-                      <DatePicker
-                        size="sm"
-                        selected={this.state.newEntry.date}
-                        onChange={this.handleDateChange}
-                        dropdownMode="select"
-                      />
-                    </div>
-                  </FormGroup>
-                </Form>
+                <label htmlFor="reasons">
+                  <p>What day are you entering for?</p>
+                </label>
+                <div>
+                  <DatePicker
+                    selected={this.state.newEntry.date}
+                    onChange={this.handleDateChange}
+                    dropdownMode="select"
+                  />
+                </div>
                 {/* FINANCIALS */}
                 <Form>
                   <label htmlFor="price">
@@ -135,7 +132,13 @@ class DailyCard extends React.Component {
                     <InputGroupAddon type="prepend">
                       <InputGroupText>$</InputGroupText>
                     </InputGroupAddon>
-                    <FormInput placeholder="xx.xx" />
+                    <FormInput
+                      value={this.state.newEntry.spending}
+                      name="spending"
+                      type="text"
+                      onChange={this.changeHandler}
+                      placeholder="xx.xx"
+                    />
                   </InputGroup>
                 </Form>
                 {/* FINANCIALS */}

@@ -13,7 +13,7 @@ function App() {
     <Container fluid className="justify-content-center align-items-center">
       {/* HEADING */}
       <Row className="d-flex flex-column justify-content-center align-items-center block">
-        <Col sm="12" md="12" lg="9" className="justify-content-center">
+        <Col className="justify-content-center">
           <Heading />
         </Col>
       </Row>
