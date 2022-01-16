@@ -1,22 +1,39 @@
 import React from "react";
 import {
+  Container,
+  Row,
+  Col,
   Card,
   CardHeader,
   CardTitle,
   CardBody,
   CardFooter,
+  InputGroup,
+  InputGroupText,
+  InputGroupAddon,
+  Form,
+  FormGroup,
+  FormInput,
+  Slider,
+  Button,
 } from "shards-react";
-import { Container, Row, Col } from "shards-react";
-import { Form, FormGroup, FormInput, Slider, Button } from "shards-react";
+import DatePicker from "../DatePicker/DatePicker.js";
+import axios from "axios";
 
 class DailyCard extends React.Component {
   constructor(props) {
     super(props);
 
     this.handleSlide = this.handleSlide.bind(this);
+    this.handleDateChange = this.handleDateChange.bind(this);
+
     this.state = {
-      dailyRating: 50,
       lastUpdated: null,
+      newEntry: {
+        date: new Date(),
+        dailyRating: 50,
+        oneLiner: "",
+      },
     };
   }
 
@@ -25,6 +42,41 @@ class DailyCard extends React.Component {
       dailyRating: parseFloat(e[0]),
     });
   }
+
+  handleDateChange(newDate) {
+    this.setState({
+      newEntry: {
+        ...this.state.newEntry,
+        date: new Date(newDate),
+      },
+    });
+  }
+
+  changeHandler = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    this.setState({
+      newEntry: {
+        ...this.state.newEntry,
+        [name]: value,
+      },
+    });
+  };
+
+  submitForm = () => {
+    axios
+      .post(
+        "https://sheet.best/api/sheets/1a7e50d3-9e5b-43bb-a499-a1b11c209d64",
+        [
+          this.state.newEntry.date.toString(),
+          this.state.newEntry.dailyRating,
+          this.state.newEntry.oneLiner,
+        ]
+      )
+      .then((response) => {
+        console.log(response);
+      });
+  };
 
   render() {
     return (
@@ -50,7 +102,7 @@ class DailyCard extends React.Component {
                 <Slider
                   onSlide={this.handleSlide}
                   connect={[true, false]}
-                  start={[this.state.dailyRating]}
+                  start={[this.state.newEntry.dailyRating]}
                   range={{ min: 0, max: 100 }}
                   pips={{ mode: "steps", stepped: true, density: 20 }}
                 />
@@ -58,26 +110,48 @@ class DailyCard extends React.Component {
             </Row>
             <Row className="internalBlockSection">
               <Col>
-                <h4>How much did you spend today?</h4>
+                {/* DATE PICKER */}
                 <Form>
                   <FormGroup>
-                    <label htmlFor="financials">
-                      <p>Provide best estimate.</p>
+                    <label htmlFor="reasons">
+                      <p>What day are you entering for?</p>
                     </label>
-                    <FormInput id="#financials" placeholder="Amount" />
+                    <div>
+                      <DatePicker
+                        size="sm"
+                        selected={this.state.newEntry.date}
+                        onChange={this.handleDateChange}
+                        dropdownMode="select"
+                      />
+                    </div>
                   </FormGroup>
                 </Form>
-              </Col>
-            </Row>
-            <Row className="internalBlockSection">
-              <Col>
-                <h4>One liner:</h4>
+                {/* FINANCIALS */}
+                <Form>
+                  <label htmlFor="price">
+                    <p>How much did you spend today?</p>
+                  </label>
+                  <InputGroup id="#price" className="mb-2">
+                    <InputGroupAddon type="prepend">
+                      <InputGroupText>$</InputGroupText>
+                    </InputGroupAddon>
+                    <FormInput placeholder="xx.xx" />
+                  </InputGroup>
+                </Form>
+                {/* FINANCIALS */}
                 <Form>
                   <FormGroup>
                     <label htmlFor="reasons">
                       <p>Describe your day in one sentence.</p>
                     </label>
-                    <FormInput id="#reason" placeholder="Reason" />
+                    <FormInput
+                      value={this.state.newEntry.oneLiner}
+                      name="oneLiner"
+                      type="text"
+                      onChange={this.changeHandler}
+                      id="#reason"
+                      placeholder="Reason"
+                    />
                   </FormGroup>
                 </Form>
               </Col>
@@ -88,7 +162,7 @@ class DailyCard extends React.Component {
           <Container>
             <Row>
               <Col>
-                <Button theme="dark">
+                <Button onClick={this.submitForm} theme="dark">
                   <p>&#128640; Submit</p>
                 </Button>
               </Col>

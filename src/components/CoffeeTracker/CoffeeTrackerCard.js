@@ -1,19 +1,18 @@
 import React from "react";
 import {
+  Container,
+  Row,
+  Col,
   Card,
   CardHeader,
-  CardTitle,
   CardBody,
   CardFooter,
-} from "shards-react";
-import { Container, Row, Col } from "shards-react";
-import {
-  Form,
-  FormGroup,
-  FormInput,
   InputGroup,
   InputGroupText,
   InputGroupAddon,
+  Form,
+  FormGroup,
+  FormInput,
   Button,
 } from "shards-react";
 
@@ -21,30 +20,35 @@ class CoffeeTrackerCard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleSlide = this.handleSlide.bind(this);
     this.state = {
       lastDrank: null,
       count: null,
       cost: null,
-      newEntry_store: null,
-      newEntry_drink: null,
-      newEntry_toppings: null,
-      newEntry_store: null,
+      newEntry: {
+        drink: "",
+        extras: "",
+        price: "",
+        store: "",
+      },
     };
   }
 
-  handleSlide(e) {
+  changeHandler = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
     this.setState({
-      dailyRating: parseFloat(e[0]),
+      newEntry: {
+        ...this.state.newEntry,
+        [name]: value,
+      },
     });
-  }
+  };
+
+  submitForm = () => {
+    console.log(this.state.newEntry);
+  };
 
   render() {
-    function submitData(e) {
-      e.preventDefault();
-      console.log(this.state);
-    }
-
     return (
       <Card style={{ maxWidth: "450px" }}>
         <CardHeader>
@@ -81,9 +85,12 @@ class CoffeeTrackerCard extends React.Component {
                       <p>Store</p>
                     </label>
                     <FormInput
-                      value={this.state.storeName}
+                      value={this.state.newEntry.store}
+                      name="store"
+                      type="text"
+                      onChange={this.changeHandler}
                       id="#store"
-                      placeholder="e.g. Omomo"
+                      placeholder="e.g. Blue Bottle"
                     />
 
                     {/* Drink Name */}
@@ -91,16 +98,26 @@ class CoffeeTrackerCard extends React.Component {
                       <p>Drink</p>
                     </label>
                     <FormInput
-                      value={this.state.storeName}
+                      value={this.state.newEntry.drink}
+                      name="drink"
+                      type="text"
+                      onChange={this.changeHandler}
                       id="#drink"
-                      placeholder="e.g. Jasmine Milk Tea"
+                      placeholder="e.g. Cold Brew"
                     />
 
                     {/* Extras */}
                     <label htmlFor="toppings">
                       <p>Extras</p>
                     </label>
-                    <FormInput id="#toppings" placeholder="e.g. Oat Milk" />
+                    <FormInput
+                      value={this.state.newEntry.extras}
+                      name="extras"
+                      type="text"
+                      onChange={this.changeHandler}
+                      id="#toppings"
+                      placeholder="e.g. Oat Milk"
+                    />
 
                     {/* Price */}
                     <label htmlFor="price">
@@ -110,7 +127,14 @@ class CoffeeTrackerCard extends React.Component {
                       <InputGroupAddon type="prepend">
                         <InputGroupText>$</InputGroupText>
                       </InputGroupAddon>
-                      <FormInput placeholder="xx.xx" />
+                      <FormInput
+                        number
+                        value={this.state.newEntry.prices}
+                        name="price"
+                        type="number"
+                        onChange={this.changeHandler}
+                        placeholder="xx.xx"
+                      />
                     </InputGroup>
                   </FormGroup>
                 </Form>
@@ -122,7 +146,7 @@ class CoffeeTrackerCard extends React.Component {
           <Container>
             <Row>
               <Col>
-                <Button onClick={submitData} theme="dark">
+                <Button onClick={this.submitForm} theme="dark">
                   <p>&#128640; Submit</p>
                 </Button>
               </Col>

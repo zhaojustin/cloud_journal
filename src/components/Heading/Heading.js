@@ -7,12 +7,12 @@ class Heading extends React.Component {
       <Container>
         <Row>
           <Col>
-            <h1 class="light">&#127804; Daily's</h1>
+            <h1 className="light">&#127804; Daily's</h1>
           </Col>
         </Row>
         <Row>
           <Col>
-            <h3 class="light">{new Date().toLocaleDateString()}</h3>
+            <h3 className="light">{new Date().toLocaleDateString()}</h3>
           </Col>
         </Row>
       </Container>

@@ -1,19 +1,19 @@
 import React from "react";
 import {
+  Container,
+  Row,
+  Col,
   Card,
   CardHeader,
   CardTitle,
   CardBody,
   CardFooter,
-} from "shards-react";
-import { Container, Row, Col } from "shards-react";
-import {
-  Form,
-  FormGroup,
-  FormInput,
   InputGroup,
   InputGroupText,
   InputGroupAddon,
+  Form,
+  FormGroup,
+  FormInput,
   Button,
 } from "shards-react";
 
@@ -21,19 +21,33 @@ class BobaTrackerCard extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleSlide = this.handleSlide.bind(this);
     this.state = {
       lastDrank: null,
       count: null,
       cost: null,
+      newEntry: {
+        drink: "",
+        extras: "",
+        price: "",
+        store: "",
+      },
     };
   }
 
-  handleSlide(e) {
+  changeHandler = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
     this.setState({
-      dailyRating: parseFloat(e[0]),
+      newEntry: {
+        ...this.state.newEntry,
+        [name]: value,
+      },
     });
-  }
+  };
+
+  submitForm = () => {
+    console.log(this.state.newEntry);
+  };
 
   render() {
     return (
@@ -71,13 +85,24 @@ class BobaTrackerCard extends React.Component {
                     <label htmlFor="store">
                       <p>Store</p>
                     </label>
-                    <FormInput id="#store" placeholder="e.g. Omomo" />
+                    <FormInput
+                      value={this.state.newEntry.store}
+                      name="store"
+                      type="text"
+                      onChange={this.changeHandler}
+                      id="#store"
+                      placeholder="e.g. Omomo"
+                    />
 
                     {/* Drink Name */}
                     <label htmlFor="drink">
                       <p>Drink</p>
                     </label>
                     <FormInput
+                      value={this.state.newEntry.drink}
+                      name="drink"
+                      type="text"
+                      onChange={this.changeHandler}
                       id="#drink"
                       placeholder="e.g. Jasmine Milk Tea"
                     />
@@ -86,7 +111,14 @@ class BobaTrackerCard extends React.Component {
                     <label htmlFor="toppings">
                       <p>Toppings</p>
                     </label>
-                    <FormInput id="#toppings" placeholder="e.g. Boba" />
+                    <FormInput
+                      value={this.state.newEntry.extras}
+                      name="extras"
+                      type="text"
+                      onChange={this.changeHandler}
+                      id="#toppings"
+                      placeholder="e.g. Boba"
+                    />
 
                     {/* Price */}
                     <label htmlFor="price">
@@ -96,7 +128,14 @@ class BobaTrackerCard extends React.Component {
                       <InputGroupAddon type="prepend">
                         <InputGroupText>$</InputGroupText>
                       </InputGroupAddon>
-                      <FormInput placeholder="xx.xx" />
+                      <FormInput
+                        number
+                        value={this.state.newEntry.price}
+                        name="price"
+                        type="number"
+                        onChange={this.changeHandler}
+                        placeholder="xx.xx"
+                      />
                     </InputGroup>
                   </FormGroup>
                 </Form>
@@ -108,7 +147,7 @@ class BobaTrackerCard extends React.Component {
           <Container>
             <Row>
               <Col>
-                <Button theme="dark">
+                <Button onClick={this.submitForm} theme="dark">
                   <p>&#128640; Submit</p>
                 </Button>
               </Col>
