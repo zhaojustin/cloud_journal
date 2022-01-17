@@ -18,8 +18,29 @@ import {
   Button,
 } from "shards-react";
 import DatePicker from "../DatePicker/DatePicker.js";
-import SheetsAPI from "../SheetsAPI/SheetsAPI.js";
+import useGoogleSheets from "use-google-sheets";
 import axios from "axios";
+
+const REACT_APP_GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_SHEETS_API_KEY;
+const REACT_APP_GOOGLE_SHEETS_ID = process.env.REACT_APP_GOOGLE_SHEETS_DOC_ID;
+
+const LastUpdated = () => {
+  const { data, loading, error } = useGoogleSheets({
+    apiKey: REACT_APP_GOOGLE_API_KEY,
+    sheetId: REACT_APP_GOOGLE_SHEETS_ID,
+  });
+
+  if (loading) {
+    return <span>Loading...</span>;
+  }
+
+  if (error) {
+    return <span>Error!</span>;
+  }
+
+  const lastUpdated = data[0].data[data[0].data.length - 1].date.split("T")[0];
+  return <span>{JSON.stringify(lastUpdated).replace(/['"]+/g, "")}</span>;
+};
 
 class DailyCard extends React.Component {
   constructor(props) {
@@ -86,16 +107,11 @@ class DailyCard extends React.Component {
           <Container className="internalBlock">
             <Row className="internalBlockSection">
               <Col>
-                <SheetsAPI />
-              </Col>
-            </Row>
-            <Row className="internalBlockSection">
-              <Col>
                 <h4>How was your day?</h4>
                 <p>
                   Last Updated:{" "}
                   <span className="data">
-                    {this.state.lastUpdated || "mm-dd-yyyy"}
+                    <LastUpdated />
                   </span>
                 </p>
                 <p>
