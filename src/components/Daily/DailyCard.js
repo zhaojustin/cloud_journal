@@ -19,7 +19,7 @@ import {
 } from "shards-react";
 import Airtable from "airtable";
 import DatePicker from "../DatePicker/DatePicker.js";
-import LastUpdated from "../Database/LastUpdated.js";
+import LastUpdated from "../Database/Daily/LastUpdated.js";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 const BASE_ID = "app27OZGEFr5eKnk4";
@@ -33,7 +33,11 @@ class DailyCard extends React.Component {
     this.submitForm = this.submitForm.bind(this);
 
     this.state = {
-      lastUpdated: "",
+      currentData: {
+        cost: "Loading...",
+        count: "Loading...",
+        lastDrank: "Loading...",
+      },
       newEntry: {
         date: new Date(),
         dailyRating: 50,
@@ -96,6 +100,10 @@ class DailyCard extends React.Component {
         });
       }
     );
+
+    this.props.toggle();
+
+    this.clearFields();
   }
 
   clearFields() {
@@ -167,13 +175,13 @@ class DailyCard extends React.Component {
                     <FormInput
                       value={this.state.newEntry.spending}
                       name="spending"
-                      type="text"
+                      type="number"
                       onChange={this.changeHandler}
                       placeholder="xx.xx"
                     />
                   </InputGroup>
                 </Form>
-                {/* FINANCIALS */}
+                {/* ONE LINER */}
                 <Form>
                   <FormGroup>
                     <label htmlFor="reasons">
@@ -182,6 +190,7 @@ class DailyCard extends React.Component {
                     <FormInput
                       value={this.state.newEntry.oneLiner}
                       name="oneLiner"
+                      invalid={this.state.oneLinerInvalid}
                       type="text"
                       onChange={this.changeHandler}
                       id="#reason"

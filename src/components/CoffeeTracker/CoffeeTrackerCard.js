@@ -17,22 +17,28 @@ import {
 } from "shards-react";
 
 import DatePicker from "../DatePicker/DatePicker.js";
+import Airtable from "airtable";
+
+import LastUpdated from "../Database/CoffeeTracker/LastUpdated.js";
+import LastUpdatedCost from "../Database/CoffeeTracker/LastUpdatedCost.js";
+import LastUpdatedCount from "../Database/CoffeeTracker/LastUpdatedCount.js";
+
+const API_KEY = process.env.REACT_APP_API_KEY;
+const BASE_ID = "app27OZGEFr5eKnk4";
 
 class CoffeeTrackerCard extends React.Component {
   constructor(props) {
     super(props);
 
     this.handleDateChange = this.handleDateChange.bind(this);
+    this.submitForm = this.submitForm.bind(this);
 
     this.state = {
-      lastDrank: null,
-      count: null,
-      cost: null,
       newEntry: {
         date: new Date(),
         drink: "",
         extras: "",
-        price: "",
+        price: 0,
         store: "",
       },
     };
@@ -50,8 +56,47 @@ class CoffeeTrackerCard extends React.Component {
   };
 
   submitForm = () => {
-    console.log(this.state.newEntry);
+    var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
+
+    base("Coffee Tracker").create(
+      [
+        {
+          fields: {
+            date: this.state.newEntry.date.toISOString().split("T")[0],
+            drink: this.state.newEntry.drink,
+            extras: this.state.newEntry.extras,
+            price: parseInt(this.state.newEntry.price),
+            store: this.state.newEntry.store,
+          },
+        },
+      ],
+      function (err, records) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        records.forEach(function (record) {
+          console.log(record.getId());
+        });
+      }
+    );
+
+    this.props.toggle();
+
+    this.clearFields();
   };
+
+  clearFields() {
+    this.setState({
+      newEntry: {
+        date: new Date(),
+        drink: "",
+        extras: "",
+        price: 0,
+        store: "",
+      },
+    });
+  }
 
   handleDateChange(newDate) {
     this.setState({
@@ -75,16 +120,20 @@ class CoffeeTrackerCard extends React.Component {
                 <h4>Current data:</h4>
                 <p>
                   Cost:{" "}
-                  <span className="data">{this.state.cost || "$xx.xx"}</span>
+                  <span className="data">
+                    <LastUpdatedCost />
+                  </span>
                 </p>
                 <p>
                   Count:{" "}
-                  <span className="data">{this.state.count || "x cups"}</span>{" "}
+                  <span className="data">
+                    <LastUpdatedCount />
+                  </span>{" "}
                 </p>
                 <p>
                   Last Drank:{" "}
                   <span className="data">
-                    {this.state.lastDrank || "mm-dd-yyyy"}
+                    <LastUpdated />
                   </span>
                 </p>
               </Col>
@@ -155,7 +204,7 @@ class CoffeeTrackerCard extends React.Component {
                       </InputGroupAddon>
                       <FormInput
                         number="true"
-                        value={this.state.newEntry.prices}
+                        value={this.state.newEntry.price}
                         name="price"
                         type="number"
                         onChange={this.changeHandler}
