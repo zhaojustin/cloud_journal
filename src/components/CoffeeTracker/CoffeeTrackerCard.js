@@ -16,15 +16,20 @@ import {
   Button,
 } from "shards-react";
 
+import DatePicker from "../DatePicker/DatePicker.js";
+
 class CoffeeTrackerCard extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleDateChange = this.handleDateChange.bind(this);
 
     this.state = {
       lastDrank: null,
       count: null,
       cost: null,
       newEntry: {
+        date: new Date(),
         drink: "",
         extras: "",
         price: "",
@@ -47,6 +52,15 @@ class CoffeeTrackerCard extends React.Component {
   submitForm = () => {
     console.log(this.state.newEntry);
   };
+
+  handleDateChange(newDate) {
+    this.setState({
+      newEntry: {
+        ...this.state.newEntry,
+        date: new Date(newDate),
+      },
+    });
+  }
 
   render() {
     return (
@@ -80,6 +94,18 @@ class CoffeeTrackerCard extends React.Component {
                 <h4>New entry:</h4>
                 <Form>
                   <FormGroup>
+                    {/* DATE PICKER */}
+                    <label htmlFor="reasons">
+                      <p>What day are you entering for?</p>
+                    </label>
+                    <div>
+                      <DatePicker
+                        selected={this.state.newEntry.date}
+                        onChange={this.handleDateChange}
+                        dropdownMode="select"
+                      />
+                    </div>
+
                     {/* Store Name */}
                     <label htmlFor="store">
                       <p>Store</p>

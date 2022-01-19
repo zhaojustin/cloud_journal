@@ -17,30 +17,12 @@ import {
   Slider,
   Button,
 } from "shards-react";
+import Airtable from "airtable";
 import DatePicker from "../DatePicker/DatePicker.js";
-import useGoogleSheets from "use-google-sheets";
-import axios from "axios";
+import LastUpdated from "../Database/LastUpdated.js";
 
-const REACT_APP_GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_SHEETS_API_KEY;
-const REACT_APP_GOOGLE_SHEETS_ID = process.env.REACT_APP_GOOGLE_SHEETS_DOC_ID;
-
-const LastUpdated = () => {
-  const { data, loading, error } = useGoogleSheets({
-    apiKey: REACT_APP_GOOGLE_API_KEY,
-    sheetId: REACT_APP_GOOGLE_SHEETS_ID,
-  });
-
-  if (loading) {
-    return <span>Loading...</span>;
-  }
-
-  if (error) {
-    return <span>Error!</span>;
-  }
-
-  const lastUpdated = data[0].data[data[0].data.length - 1].date.split("T")[0];
-  return <span>{JSON.stringify(lastUpdated).replace(/['"]+/g, "")}</span>;
-};
+const API_KEY = process.env.REACT_APP_API_KEY;
+const BASE_ID = "app27OZGEFr5eKnk4";
 
 class DailyCard extends React.Component {
   constructor(props) {
@@ -48,13 +30,14 @@ class DailyCard extends React.Component {
 
     this.handleSlide = this.handleSlide.bind(this);
     this.handleDateChange = this.handleDateChange.bind(this);
+    this.submitForm = this.submitForm.bind(this);
 
     this.state = {
-      lastUpdated: null,
+      lastUpdated: "",
       newEntry: {
         date: new Date(),
         dailyRating: 50,
-        spending: "",
+        spending: 0,
         oneLiner: "",
       },
     };
@@ -89,13 +72,42 @@ class DailyCard extends React.Component {
     });
   };
 
-  submitForm = () => {
-    axios
-      .post(process.env.REACT_APP_SHEETS_BEST_URL, this.state.newEntry)
-      .then((response) => {
-        console.log(response);
-      });
-  };
+  submitForm() {
+    var base = new Airtable({ apiKey: API_KEY }).base(BASE_ID);
+
+    base("Dailys").create(
+      [
+        {
+          fields: {
+            date: this.state.newEntry.date.toISOString().split("T")[0],
+            dailyRating: this.state.newEntry.dailyRating,
+            spending: parseInt(this.state.newEntry.spending),
+            oneLiner: this.state.newEntry.oneLiner,
+          },
+        },
+      ],
+      function (err, records) {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        records.forEach(function (record) {
+          console.log(record.getId());
+        });
+      }
+    );
+  }
+
+  clearFields() {
+    this.setState({
+      newEntry: {
+        date: new Date(),
+        dailyRating: 50,
+        spending: 0,
+        oneLiner: "",
+      },
+    });
+  }
 
   render() {
     return (
